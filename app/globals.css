@@ -25,3 +25,11 @@ body {
     )
     rgb(var(--background-start-rgb));
 }
+
+.barChartBox{
+  width: 800px;
+  height: 300px !important;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

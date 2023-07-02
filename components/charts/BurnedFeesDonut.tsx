@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react'
+import React, {useEffect, useState, useRef} from 'react'
 import { 
   Chart as ChartJS,
   CategoryScale,
@@ -26,7 +26,7 @@ ChartJS.register(
   ArcElement
 )
 
-import { Line, Bar, Scatter, Bubble } from 'react-chartjs-2'
+import { getElementAtEvent } from 'react-chartjs-2'
 import useFetchTxData from '@/hooks/useFetchTxData'
 
 type ChartData = {
@@ -40,17 +40,20 @@ type ChartData = {
   }[]
 }
 
-  // array of colors for the chart
-  const bgColors:string[] = ['#54478c', '#2c699a', '#048ba8', '#0db39e', '#16db93', '#83e377', '#b9e769', '#efea5a', '#f1c453', '#f29e4c', '#f4845f', '#f76f8e', '#e15b97', '#c9406a', '#a9225c', '#831843', '#4b202e', '#2a0c3a', '#050c3a', '#0c2e3d', '#183d3f', '#1e4d2b', '#1e4d2b', '#345e3f', '#4b6e51', '#627e63', '#7a8e75', '#93a085', '#aeb096', '#c8c8a9', '#e3e3bd', '#ffffd4']
-
+// array of colors for the chart
+const bgColors:string[] = ['#54478c', '#2c699a', '#048ba8', '#0db39e', '#16db93', '#83e377', '#b9e769', '#efea5a', '#f1c453', '#f29e4c', '#f4845f', '#f76f8e', '#e15b97', '#c9406a', '#a9225c', '#831843', '#4b202e', '#2a0c3a', '#050c3a', '#0c2e3d', '#183d3f', '#1e4d2b', '#1e4d2b', '#345e3f', '#4b6e51', '#627e63', '#7a8e75', '#93a085', '#aeb096', '#c8c8a9', '#e3e3bd', '#ffffd4']
 
 const BurnedFeesDonut = () => {
   const {txData} = useFetchTxData()
   const [chartData, setChartData] = useState<ChartData|null>(null)
-
+  const chartRef = useRef();
+  
   // make an object with grouped data
   const groups: Record<string, number> = {};
 
+  const onClick = (event:any) => {
+    console.log(getElementAtEvent(chartRef.current!, event));
+  }
 
   // prepare the data for a donut chart
   useEffect(() => {
@@ -58,6 +61,18 @@ const BurnedFeesDonut = () => {
     if (txData) {
       // loop through the txData
       txData.forEach((tx) => {
+        if (tx.group === "Code Metal Rewards Distribution") {
+          tx.group = "Code Metal"
+        }
+
+        if (tx.group === "Code Metal Rewards Distribution") {
+          tx.group = "Code Metal"
+        }
+
+        if (tx.group === undefined) {
+          return
+        }
+
         // if group doesn't exist, create it
         if (!groups[tx.group]) {
           groups[tx.group] = 0
@@ -95,26 +110,31 @@ const BurnedFeesDonut = () => {
   const chartOptions = {
     plugins: {
       legend: {
+        // onClick: (event:any, legendItem:any) => {
+        //   const chart = event.chart;
+        //   console.log(chart.defaults)
+        //   const datasetIndex = legendItem.index;
+        //   const dataset = chart.data.datasets[0].data[datasetIndex];
+        //   // console.log(dataset)
+        //   // // Toggle the visibility of the dataset
+        //   // dataset.hidden = dataset.hidden === null ? !dataset.hidden : null;
+  
+        //   // chart.update();
+        // },
         position: 'left',
         align: 'center',
-        labels: {
+        labels: 
+        {
           generateLabels: (chart:any) => {
             const data = chart.data;
+        
             if (data.labels.length && data.datasets.length) {
               return data.labels.map((label:string, index:number) => {
                 const dataset = data.datasets[0];
                 const value = dataset.data[index].toFixed(2);
                 const backgroundColor = dataset.backgroundColor[index];
                 const borderColor = dataset.borderColor[index];
-
-                // if label is undefined remove it
-                if (label === 'undefined') {
-                  data.labels.splice(index, 1)
-                  dataset.data.splice(index, 1)
-                  dataset.backgroundColor.splice(index, 1)
-                  dataset.borderColor.splice(index, 1)
-                }
-
+                
                 return {
                   text: `${label}: ${value}`,
                   fillStyle: backgroundColor,
@@ -130,14 +150,7 @@ const BurnedFeesDonut = () => {
         },
       },
     },
-    layout: {
-      padding: {
-        right: 10,
-        top: 10,
-      },
-    },
-
-  } as any
+  } as any;
 
   return (
     <div>
@@ -146,12 +159,19 @@ const BurnedFeesDonut = () => {
           <h2 className="text-5xl font-bold">Burned Fees</h2>   
           <p className="text-sm text-gray-500">2023-06-29</p>
         </div>
+        <p
+        className='text-sm text-gray-500'
+        >
+          Fees are burned every blablabla
+        </p>
         { chartData && 
         <div className="">
           <Doughnut 
             data={chartData} 
             options={chartOptions}
             className='h-[300px] w-[600px]'
+            ref={chartRef}
+            onClick={onClick}
           /> 
         </div>
         }

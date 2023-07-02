@@ -21,7 +21,7 @@ export default function Home() {
   return (
     <main 
     className={`
-    flex min-h-screen flex-col items-center justify-between p-24 text-gray-900 gap-12
+    flex min-h-screen flex-col items-center justify-between md:p-24 text-gray-900 gap-12
     ${rubik.className}
     `}>
       <BurnedFeesDonut />
