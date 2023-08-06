@@ -28,6 +28,7 @@ ChartJS.register(
 
 import { getElementAtEvent } from 'react-chartjs-2'
 import useFetchTxData from '@/hooks/useFetchTxData'
+import DateSetter from '../ui/DateSetter';
 
 type ChartData = {
   labels: string[],
@@ -44,16 +45,30 @@ type ChartData = {
 const bgColors:string[] = ['#54478c', '#2c699a', '#048ba8', '#0db39e', '#16db93', '#83e377', '#b9e769', '#efea5a', '#f1c453', '#f29e4c', '#f4845f', '#f76f8e', '#e15b97', '#c9406a', '#a9225c', '#831843', '#4b202e', '#2a0c3a', '#050c3a', '#0c2e3d', '#183d3f', '#1e4d2b', '#1e4d2b', '#345e3f', '#4b6e51', '#627e63', '#7a8e75', '#93a085', '#aeb096', '#c8c8a9', '#e3e3bd', '#ffffd4']
 
 const BurnedFeesDonut = () => {
-  const {txData} = useFetchTxData()
+  const {txData, fetchDailyTxs} = useFetchTxData()
   const [chartData, setChartData] = useState<ChartData|null>(null)
+  const [selectedDate, setSelectedDate] = useState<Date|null>(null)
+  const [maxDate, setMaxDate] = useState<Date|null>(null)
   const chartRef = useRef();
   
+  useEffect(() => {
+    const yesterday = new Date(Date.now() - 864e5)
+    setSelectedDate(yesterday)
+    setMaxDate(yesterday)
+  }, [])
+
+  useEffect(() => {
+    if (selectedDate) {
+      fetchDailyTxs(selectedDate)
+    }
+  }, [fetchDailyTxs, selectedDate])
+
   // make an object with grouped data
   const groups: Record<string, number> = {};
 
-  const onClick = (event:any) => {
-    console.log(getElementAtEvent(chartRef.current!, event));
-  }
+  // const onClick = (event:any) => {
+  //   console.log(getElementAtEvent(chartRef.current!, event));
+  // }
 
   // prepare the data for a donut chart
   useEffect(() => {
@@ -156,8 +171,8 @@ const BurnedFeesDonut = () => {
     <div>
       <div className="py-6 px-12 rounded-xl border rounded-xl bg-white shadow-lg">
         <div className="flex items-center justify-between">
-          <h2 className="text-5xl font-bold">Burned Fees</h2>   
-          <p className="text-sm text-gray-500">2023-06-29</p>
+          <h2 className="text-5xl font-bold">Burned Fees</h2>  
+          <DateSetter date={selectedDate} setDate={setSelectedDate} maxDate={maxDate}/>
         </div>
         <p
         className='text-sm text-gray-500'
@@ -171,7 +186,7 @@ const BurnedFeesDonut = () => {
             options={chartOptions}
             className='h-[300px] w-[600px]'
             ref={chartRef}
-            onClick={onClick}
+            // onClick={onClick}
           /> 
         </div>
         }
