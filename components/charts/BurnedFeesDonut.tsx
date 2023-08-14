@@ -27,8 +27,9 @@ ChartJS.register(
 )
 
 import { getElementAtEvent } from 'react-chartjs-2'
-import useFetchTxData from '@/hooks/useFetchTxData'
+import useFetchTxData from '@/hooks/useBurnedFees'
 import DateSetter from '../ui/DateSetter';
+import { formatDateForGHRepo, formatWeeklyDatesForGHRepo, formatMonthlyDatesForGHRepo } from '@/utils/utils';
 
 type ChartData = {
   labels: string[],
@@ -47,8 +48,8 @@ const bgColors:string[] = ['#54478c', '#2c699a', '#048ba8', '#0db39e', '#16db93'
 export type period = 'daily' | 'weekly' | 'monthly'
 
 const BurnedFeesDonut = () => {
-  const [period, setPeriod] = useState<period>('daily')
-  const {txData, fetchDailyTxs} = useFetchTxData()
+  const [period, setPeriod] = useState<period>('weekly')
+  const {txDataBurnedFees, fetchTxs} = useFetchTxData()
   const [chartData, setChartData] = useState<ChartData|null>(null)
   const [selectedDate, setSelectedDate] = useState<Date|null>(null)
   const [maxDate, setMaxDate] = useState<Date|null>(null)
@@ -63,9 +64,9 @@ const BurnedFeesDonut = () => {
 
   useEffect(() => {
     if (selectedDate) {
-      fetchDailyTxs(period, selectedDate)
+      fetchTxs(period, selectedDate)
     }
-  }, [fetchDailyTxs, selectedDate, period])
+  }, [fetchTxs, selectedDate, period])
 
   // make an object with grouped data
   const groups: Record<string, number> = {};
@@ -73,17 +74,13 @@ const BurnedFeesDonut = () => {
   // prepare the data for a donut chart
   useEffect(() => {
     
-    if (txData) {
+    if (txDataBurnedFees) {
       // loop through the txData
-      txData.forEach((tx) => {
+      txDataBurnedFees.forEach((tx) => {
         // shorten long group names
         if (tx.group === "Code Metal Rewards Distribution") {
           tx.group = "Code Metal"
         }
-
-        // if (tx.group === "Code Metal Rewards Distribution") {
-        //   tx.group = "Code Metal"
-        // }
 
         if (tx.group === undefined) {
           return
@@ -120,7 +117,7 @@ const BurnedFeesDonut = () => {
     }
 
     setChartData(chartData)
-  }, [txData])
+  }, [txDataBurnedFees])
 
 
   const chartOptions = {
@@ -171,21 +168,31 @@ const BurnedFeesDonut = () => {
   return (
     <div>
       <div className="py-6 px-12 rounded-xl border rounded-xl bg-white shadow-lg">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center">
           <h2 className="text-5xl font-bold">Burned Fees</h2>  
+        </div>
+        <div className="flex items-center justify-between">
+          <div>
+            <input type="radio" id="daily" name="period_burned" value="daily" checked={period === "daily"} onChange={() => setPeriod("daily")} />
+            <label htmlFor="daily" className="ml-2 mr-8">Daily</label>
+            <input type="radio" id="weekly" name="period_burned" value="weekly" checked={period === "weekly"} onChange={() => setPeriod("weekly")} />
+            <label htmlFor="weekly" className="ml-2 mr-8">Weekly</label>
+            <input type="radio" id="monthly" name="period_burned" value="monthly" checked={period === "monthly"} onChange={() => setPeriod("monthly")} />
+            <label htmlFor="monthly" className="ml-2 mr-8">Monthly</label>
+          </div>
           <DateSetter date={selectedDate} setDate={setSelectedDate} maxDate={maxDate}/>
         </div>
-        <p
-        className='text-sm text-gray-500'
-        >
-          Fees are burned every blablabla
-        </p>
+        <div className='text-sm text-gray-500 my-4'>
+        { selectedDate && period === "daily" && <p>{formatDateForGHRepo(selectedDate)}</p>}
+        { selectedDate && period === "weekly" && <p>{formatWeeklyDatesForGHRepo(selectedDate).replaceAll("_", " ")}</p>}
+        { selectedDate && period === "monthly" && <p>{formatMonthlyDatesForGHRepo(selectedDate).replaceAll("_", " ")}</p>}
+        </div>
         { chartData && 
-        <div className="">
+        <div className="border">
           <Doughnut 
             data={chartData} 
             options={chartOptions}
-            className='h-[300px] w-[600px]'
+            className='h-[300px] w-[700px]'
             ref={chartRef}
             // onClick={onClick}
           /> 

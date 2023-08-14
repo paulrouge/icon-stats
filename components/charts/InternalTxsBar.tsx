@@ -25,9 +25,11 @@ ChartJS.register(
   Filler,
   ArcElement
 )
-
+import DateSetter from '../ui/DateSetter';
+import { period } from './BurnedFeesDonut';
 import { Line, Bar, Scatter, Bubble, getElementAtEvent } from 'react-chartjs-2'
-import useFetchTxData from '@/hooks/useFetchTxData'
+import useFetchTxData from '@/hooks/useInternalTxs'
+import { formatDateForGHRepo, formatWeeklyDatesForGHRepo, formatMonthlyDatesForGHRepo } from '@/utils/utils';
 
 type ChartData = {
   labels: string[],
@@ -40,13 +42,16 @@ type ChartData = {
   }[]
 }
 
-  // array of colors for the chart
-  const bgColors:string[] = ['#54478c', '#2c699a', '#048ba8', '#0db39e', '#16db93', '#83e377', '#b9e769', '#efea5a', '#f1c453', '#f29e4c', '#f4845f', '#f76f8e', '#e15b97', '#c9406a', '#a9225c', '#831843', '#4b202e', '#2a0c3a', '#050c3a', '#0c2e3d', '#183d3f', '#1e4d2b', '#1e4d2b', '#345e3f', '#4b6e51', '#627e63', '#7a8e75', '#93a085', '#aeb096', '#c8c8a9', '#e3e3bd', '#ffffd4']
+// array of colors for the chart
+const bgColors:string[] = ['#54478c', '#2c699a', '#048ba8', '#0db39e', '#16db93', '#83e377', '#b9e769', '#efea5a', '#f1c453', '#f29e4c', '#f4845f', '#f76f8e', '#e15b97', '#c9406a', '#a9225c', '#831843', '#4b202e', '#2a0c3a', '#050c3a', '#0c2e3d', '#183d3f', '#1e4d2b', '#1e4d2b', '#345e3f', '#4b6e51', '#627e63', '#7a8e75', '#93a085', '#aeb096', '#c8c8a9', '#e3e3bd', '#ffffd4']
 
 
 const InternalTxsBar  = () => {
-  const {txData} = useFetchTxData()
+  const [period, setPeriod] = useState<period>('weekly')
+  const { txDataInternal, fetchTxs } = useFetchTxData()
   const [chartData, setChartData] = useState<ChartData|null>(null)
+  const [selectedDate, setSelectedDate] = useState<Date|null>(null)
+  const [maxDate, setMaxDate] = useState<Date|null>(null)
   const [windowWidth, setWindowWidth] = useState<number>(0)
 
   // get the window width
@@ -54,18 +59,30 @@ const InternalTxsBar  = () => {
     setWindowWidth(window.innerWidth)
   }, [])
 
+  // set the initial date to yesterday, the max date should also be yesterday and stay that way
+  useEffect(() => {
+    const yesterday = new Date(Date.now() - 864e5)
+    setSelectedDate(yesterday)
+    setMaxDate(yesterday)
+  }, [])
+
+  useEffect(() => {
+    if (selectedDate) {
+      fetchTxs(period, selectedDate)
+    }
+  }, [fetchTxs, selectedDate, period])
+
   const groups: Record<string, number> = {};
 
-  // prepare the data for a donut chart
+  // prepare the data for the chart
   useEffect(() => {
-    
-    // make an object with grouped data
-    
     setChartData(null)
 
-    if (txData) {
+    if (txDataInternal) {
+      console.log(txDataInternal)
+      
       // loop through the txData
-      txData.forEach((tx) => {
+      txDataInternal.forEach((tx) => {
     
         const groupsToIgnore = ['System', 'governance', 'undefined']
         // if the group is in the ignore list, skip it
@@ -112,7 +129,7 @@ const InternalTxsBar  = () => {
     }
 
     setChartData(chartData)
-  }, [txData])
+  }, [txDataInternal])
 
   const getPos = () => {
     if (windowWidth < 768) {
@@ -162,22 +179,30 @@ const InternalTxsBar  = () => {
     },
   } as any;
   
-//   const chartRef = useRef();
-  
-//   const handleClick = (e:any) => {
-//     const el = getElementAtEvent(chartRef.current!,e);
-//     console.log(el)
-//     }
-
   return (
     <div>
       <div className="py-6 px-12 rounded-xl border rounded-xl bg-white shadow-lg">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center">
           <h2 className="md:text-5xl text-2xl font-bold">Internal Transactions</h2>   
-          <p className="md:text-sm text-xs text-gray-500">2023-06-29</p>
+        </div>
+        <div className="flex items-center justify-between">
+          <div>
+            <input type="radio" id="daily" name="period_internal" value="daily" checked={period === "daily"} onChange={() => setPeriod("daily")} />
+            <label htmlFor="daily" className="ml-2 mr-8">Daily</label>
+            <input type="radio" id="weekly" name="period_internal" value="weekly" checked={period === "weekly"} onChange={() => setPeriod("weekly")} />
+            <label htmlFor="weekly" className="ml-2 mr-8">Weekly</label>
+            <input type="radio" id="monthly" name="period_internal" value="monthly" checked={period === "monthly"} onChange={() => setPeriod("monthly")} />
+            <label htmlFor="monthly" className="ml-2 mr-8">Monthly</label>
+          </div>
+          <DateSetter date={selectedDate} setDate={setSelectedDate} maxDate={maxDate}/>
+        </div>
+        <div className='text-sm text-gray-500 my-4'>
+        { selectedDate && period === "daily" && <p>{formatDateForGHRepo(selectedDate)}</p>}
+        { selectedDate && period === "weekly" && <p>{formatWeeklyDatesForGHRepo(selectedDate).replaceAll("_", " ")}</p>}
+        { selectedDate && period === "monthly" && <p>{formatMonthlyDatesForGHRepo(selectedDate).replaceAll("_", " ")}</p>}
         </div>
         { chartData && 
-        <div className="w-full">
+        <div className="h-[300px] w-[700px]">
           <Bar 
             data={chartData} 
             options={chartOptions}
