@@ -44,13 +44,17 @@ type ChartData = {
 // array of colors for the chart
 const bgColors:string[] = ['#54478c', '#2c699a', '#048ba8', '#0db39e', '#16db93', '#83e377', '#b9e769', '#efea5a', '#f1c453', '#f29e4c', '#f4845f', '#f76f8e', '#e15b97', '#c9406a', '#a9225c', '#831843', '#4b202e', '#2a0c3a', '#050c3a', '#0c2e3d', '#183d3f', '#1e4d2b', '#1e4d2b', '#345e3f', '#4b6e51', '#627e63', '#7a8e75', '#93a085', '#aeb096', '#c8c8a9', '#e3e3bd', '#ffffd4']
 
+export type period = 'daily' | 'weekly' | 'monthly'
+
 const BurnedFeesDonut = () => {
+  const [period, setPeriod] = useState<period>('daily')
   const {txData, fetchDailyTxs} = useFetchTxData()
   const [chartData, setChartData] = useState<ChartData|null>(null)
   const [selectedDate, setSelectedDate] = useState<Date|null>(null)
   const [maxDate, setMaxDate] = useState<Date|null>(null)
   const chartRef = useRef();
-  
+ 
+  // set the initial date to yesterday, the max date should also be yesterday and stay that way
   useEffect(() => {
     const yesterday = new Date(Date.now() - 864e5)
     setSelectedDate(yesterday)
@@ -59,16 +63,12 @@ const BurnedFeesDonut = () => {
 
   useEffect(() => {
     if (selectedDate) {
-      fetchDailyTxs(selectedDate)
+      fetchDailyTxs(period, selectedDate)
     }
-  }, [fetchDailyTxs, selectedDate])
+  }, [fetchDailyTxs, selectedDate, period])
 
   // make an object with grouped data
   const groups: Record<string, number> = {};
-
-  // const onClick = (event:any) => {
-  //   console.log(getElementAtEvent(chartRef.current!, event));
-  // }
 
   // prepare the data for a donut chart
   useEffect(() => {
@@ -76,13 +76,14 @@ const BurnedFeesDonut = () => {
     if (txData) {
       // loop through the txData
       txData.forEach((tx) => {
+        // shorten long group names
         if (tx.group === "Code Metal Rewards Distribution") {
           tx.group = "Code Metal"
         }
 
-        if (tx.group === "Code Metal Rewards Distribution") {
-          tx.group = "Code Metal"
-        }
+        // if (tx.group === "Code Metal Rewards Distribution") {
+        //   tx.group = "Code Metal"
+        // }
 
         if (tx.group === undefined) {
           return

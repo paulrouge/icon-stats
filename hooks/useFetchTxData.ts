@@ -1,6 +1,7 @@
 import React, {use, useEffect, useState} from 'react'
 import { txDataResponse } from '@/types/types';
 import { urlBuilderTransactions, formatDateForGHRepo } from '@/utils/utils';
+import { period } from '@/components/charts/BurnedFeesDonut';
 
 /**
  * to do:
@@ -33,26 +34,8 @@ const useFetchTxData = () => {
   const [date, setDate] = useState<Date|null>(null);
   const [txDailyUrl, setTxDailyUrl] = useState<string|null>(null);
 
-  // get the date of today
-  // useEffect(() => {
-  //     const today = new Date();
-  //     const year = today.getFullYear();
-  //     const month = today.getMonth() + 1;
-  //     const day = today.getDate();
-
-  //     setDate(`${year}-${month}-${day}`)
-  // }, [])
-
   useEffect(() => {
     if (date) {
-      // const ymd = date.split('-')
-      // const day = Number(ymd[2]) - 1 
-      
-      // // day to string prepended with 0 if less than 10
-      // const dayString = day < 10 ? '0' + day.toString() : day.toString()
-
-      // // month to string prepended with 0 if less than 10
-      // const monthString = Number(ymd[1]) < 10 ? '0' + ymd[1] : ymd[1]
       const url = urlBuilderTransactions(formatDateForGHRepo(date),'daily')
       
       setTxDailyUrl(url)
@@ -101,23 +84,21 @@ const useFetchTxData = () => {
       }
   }, [csvData])
 
-  const fetchDailyTxs= async (_date:Date) => {
+  const fetchDailyTxs= async (_period:period, _date:Date) => {
     const formattedDate = formatDateForGHRepo(_date)
     const url = urlBuilderTransactions(formattedDate, 'daily')
 
-    // const fetchData = async () => {
-      try {
-        const response = await fetch(url);
-        if (response.ok) {
-          const data = await response.text();
-          setCsvData(data);
-        } else {
-          console.error('Request failed with status', response.status);
-        }
-      } catch (error) {
-        console.error('An error occurred', error);
+    try {
+      const response = await fetch(url);
+      if (response.ok) {
+        const data = await response.text();
+        setCsvData(data);
+      } else {
+        console.error('Request failed with status', response.status);
       }
-    // }
+    } catch (error) {
+      console.error('An error occurred', error);
+    }
 
   }
 
