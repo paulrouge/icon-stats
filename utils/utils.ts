@@ -3,35 +3,18 @@ import { baseURLTransactionData } from "./constants"
 
 
 export const urlBuilderTransactions = (_dateString: string, _period: period) => {  
-    // monhtly tx data example url:
-    // baseURLTransactionData + monthly/2023-07-03_to_2023-08-01/tx_summary_2023-07-03_to_2023-08-01.csv
-    // weekly tx data example url:
-    // baseURLTransactionData + weekly/2023-07-30_to_2023-08-05/tx_summary_2023-07-30_to_2023-08-05.csv
-  
-    
     let url = ''
 
     if (_period === 'monthly') {
-        const s = ''
-        url = baseURLTransactionData + '/' + 'tx_summary_' + '.csv'
+        url = baseURLTransactionData + 'monthly/' + _dateString + '/tx_summary_' + _dateString +'.csv'
     } else if (_period === 'weekly') {
-        const s = ''  
-        url = baseURLTransactionData + 'weekly/' + 'tx_summary_' + '.csv'
+        url = baseURLTransactionData + 'weekly/' + _dateString + '/tx_summary_'+ _dateString + '.csv'
     } else {
         const year = _dateString.split('-')[0]
         url = baseURLTransactionData + year + '/' + 'tx_summary_' + _dateString + '.csv'
     }
 
   return url
-}
-
-// function that takes in 1 month number and returns the first and last day of that month
-export const formatWeeklyDatesForGHRepo = (date: Date) => {
-    const lastDay = formatDateForGHRepo(date)
-    // first day is 6 days prior
-    const firstDay = formatDateForGHRepo(new Date(date.getTime() - 6 * 24 * 60 * 60 * 1000))
-
-    return `${firstDay}_to_${lastDay}`
 }
 
 // function that takes in a date and formats in YYYY-MM-DD
@@ -47,4 +30,22 @@ export const formatDateForGHRepo = (date: Date) => {
     const monthString = month < 10 ? '0' + month.toString() : month.toString()
 
     return `${year}-${monthString}-${dayString}`
+}
+
+// function that takes in a date and returns a string if date and date 6 days prior
+export const formatWeeklyDatesForGHRepo = (date: Date) => {
+    const lastDay = formatDateForGHRepo(date)
+    // first day is 6 days prior
+    const firstDay = formatDateForGHRepo(new Date(date.getTime() - 6 * 24 * 60 * 60 * 1000))
+
+    return `${firstDay}_to_${lastDay}`
+}
+
+// function that takes in a date and returns a string if date and date 29 days prior
+export const formatMonthlyDatesForGHRepo = (date: Date) => {
+    const lastDay = formatDateForGHRepo(date)
+    // first day is 29 days prior
+    const firstDay = formatDateForGHRepo(new Date(date.getTime() - 29 * 24 * 60 * 60 * 1000))
+
+    return `${firstDay}_to_${lastDay}`
 }
