@@ -173,11 +173,11 @@ const BurnedFeesDonut = () => {
         </div>
         <div className="flex items-center justify-between">
           <div>
-            <input type="radio" id="daily" name="period_burned" value="daily" checked={period === "daily"} onChange={() => setPeriod("daily")} />
+            <input type="radio" id="daily_burned" name="period_burned" value="daily" checked={period === "daily"} onChange={() => setPeriod("daily")} />
             <label htmlFor="daily" className="ml-2 mr-8">Daily</label>
-            <input type="radio" id="weekly" name="period_burned" value="weekly" checked={period === "weekly"} onChange={() => setPeriod("weekly")} />
+            <input type="radio" id="weekly__burned" name="period_burned" value="weekly" checked={period === "weekly"} onChange={() => setPeriod("weekly")} />
             <label htmlFor="weekly" className="ml-2 mr-8">Weekly</label>
-            <input type="radio" id="monthly" name="period_burned" value="monthly" checked={period === "monthly"} onChange={() => setPeriod("monthly")} />
+            <input type="radio" id="monthly__burned" name="period_burned" value="monthly" checked={period === "monthly"} onChange={() => setPeriod("monthly")} />
             <label htmlFor="monthly" className="ml-2 mr-8">Monthly</label>
           </div>
           <DateSetter date={selectedDate} setDate={setSelectedDate} maxDate={maxDate}/>

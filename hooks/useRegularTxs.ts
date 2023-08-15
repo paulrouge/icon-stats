@@ -3,30 +3,25 @@ import { txDataResponse } from '@/types/types';
 import { urlBuilderTransactions, formatDateForGHRepo, formatWeeklyDatesForGHRepo, formatMonthlyDatesForGHRepo } from '@/utils/utils';
 import { period } from '@/components/charts/BurnedFeesDonut';
 
-/**
- * to do:
- * transactions - daily, weekly, monthly
- * internal transactions - daily, weekly, monthly
- * burned ICX - daily, weekly, monthly
- * Trends
- * IRC Tokens - Daily token transfers
- * Exhange Data
- * 
- * 
- * 1. I think we need a function that builds the URL based on the date
- * 2. We need to fetch the data from the URL
- * 3. make a usestate for each of the data types, that is set by the fetch function
- */
-
-const useBurnedFees = () => {
+const useRegularTxs = () => {
   const [csvData, setCsvData] = useState('');
-  const [txDataBurnedFees, setTxDataBurnedFees] = useState<txDataResponse[]>([]);
+  const [txDataRegular, setTxDataRegular] = useState<txDataResponse[]>([]);
+  const [date, setDate] = useState<Date|null>(null);
   const [txDailyUrl, setTxDailyUrl] = useState<string|null>(null);
   
+
+  useEffect(() => {
+    if (date) {
+      const url = urlBuilderTransactions(formatDateForGHRepo(date),'daily')
+      setTxDailyUrl(url)
+    }
+  }, [date])
+
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await fetch(txDailyUrl!);
+        
         if (response.ok) {
           const data = await response.text();
           setCsvData(data);
@@ -62,15 +57,14 @@ const useBurnedFees = () => {
           }
           return txData
       })
+      
+      // sort by internal txs
+      txData.sort((a, b) => b["Regular Tx"] - a["Regular Tx"])
 
-      // sort by fees burned
-      txData.sort((a, b) => b["Fees burned"] - a["Fees burned"])
+      // get top 15, and then sum the rest
+      const top15 = txData.slice(0, 25)
+      const rest = txData.slice(25)
 
-      // get top 30
-      const top30 = txData.slice(0, 30)
-      const rest = txData.slice(30)
-
-      // sum the rest
       const sumRest: txDataResponse = {
         to: 'Cumulative Rest',
         ["Regular Tx"]: 0,
@@ -82,18 +76,23 @@ const useBurnedFees = () => {
       }
 
       let counter = 0
-
+      
       rest.forEach(tx => {
-        // only handling fees burned is needed here
-        const feesBurned = tx["Fees burned"]
+        // only process regular txs is needed
+        const iTxs = tx["Regular Tx"]
 
-        if(!isNaN(feesBurned) && feesBurned !== 0) {
-          counter += feesBurned
+        // if iTxs is not a number or 0 continue
+        if (!iTxs || iTxs === 0) {
+          return
         }
+        counter += iTxs
       })
 
-      sumRest["Fees burned"] = counter
-      setTxDataBurnedFees([...top30, sumRest])
+      sumRest["Regular Tx"] = counter
+
+      const txDataTop15 = [...top15]
+      setTxDataRegular(txDataTop15)
+
     }
   }, [csvData])
 
@@ -126,9 +125,9 @@ const useBurnedFees = () => {
   }
 
   return { 
-    txDataBurnedFees,
+    txDataRegular,
     fetchTxs,
   }
 }
 
-export default useBurnedFees
+export default useRegularTxs

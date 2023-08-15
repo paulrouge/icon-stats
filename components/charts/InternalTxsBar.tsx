@@ -28,7 +28,7 @@ ChartJS.register(
 import DateSetter from '../ui/DateSetter';
 import { period } from './BurnedFeesDonut';
 import { Line, Bar, Scatter, Bubble, getElementAtEvent } from 'react-chartjs-2'
-import useFetchTxData from '@/hooks/useInternalTxs'
+import useInternalTxs from '@/hooks/useInternalTxs'
 import { formatDateForGHRepo, formatWeeklyDatesForGHRepo, formatMonthlyDatesForGHRepo } from '@/utils/utils';
 
 type ChartData = {
@@ -48,7 +48,7 @@ const bgColors:string[] = ['#54478c', '#2c699a', '#048ba8', '#0db39e', '#16db93'
 
 const InternalTxsBar  = () => {
   const [period, setPeriod] = useState<period>('weekly')
-  const { txDataInternal, fetchTxs } = useFetchTxData()
+  const { txDataInternal, fetchTxs } = useInternalTxs()
   const [chartData, setChartData] = useState<ChartData|null>(null)
   const [selectedDate, setSelectedDate] = useState<Date|null>(null)
   const [maxDate, setMaxDate] = useState<Date|null>(null)
@@ -79,20 +79,18 @@ const InternalTxsBar  = () => {
     setChartData(null)
 
     if (txDataInternal) {
-      console.log(txDataInternal)
-      
       // loop through the txData
       txDataInternal.forEach((tx) => {
-    
-        const groupsToIgnore = ['System', 'governance', 'undefined']
+
+        const groupsToIgnore = ['System', 'governance', 'undefined','0']
         // if the group is in the ignore list, skip it
         if (groupsToIgnore.includes(tx.group)) {
           return
         }
    
-        if (tx.group === undefined) {
-          return
-        }
+        // if (tx.group === undefined) {
+        //   return
+        // }
 
         if (tx.group === "Code Metal Rewards Distribution") {
           tx.group = "Code Metal"
@@ -106,7 +104,7 @@ const InternalTxsBar  = () => {
         groups[tx.group] += Number(Number(tx["Internal Tx"]).toFixed())
 
         // remove the group if it's < 2
-        if (groups[tx.group] < 20) {
+        if (groups[tx.group] < 2) {
           delete groups[tx.group]
         }
       })
@@ -153,7 +151,10 @@ const InternalTxsBar  = () => {
               return []
             }
             const data = chart.data;
+
             if (data.labels.length && data.datasets.length) {
+              // console.log('amount of entries', data.labels.length, data)
+              
               return data.labels.map((label:string, index:number) => {
                 const dataset = data.datasets[0];
                 const value = dataset.data[index].toFixed(0);
@@ -172,9 +173,7 @@ const InternalTxsBar  = () => {
             }
             return [];
           },
-        },
-        // labels:[]
-        
+        },        
       },
     },
   } as any;
@@ -187,11 +186,11 @@ const InternalTxsBar  = () => {
         </div>
         <div className="flex items-center justify-between">
           <div>
-            <input type="radio" id="daily" name="period_internal" value="daily" checked={period === "daily"} onChange={() => setPeriod("daily")} />
+            <input type="radio" id="daily_internal" name="period_internal" value="daily" checked={period === "daily"} onChange={() => setPeriod("daily")} />
             <label htmlFor="daily" className="ml-2 mr-8">Daily</label>
-            <input type="radio" id="weekly" name="period_internal" value="weekly" checked={period === "weekly"} onChange={() => setPeriod("weekly")} />
+            <input type="radio" id="weekly_internal" name="period_internal" value="weekly" checked={period === "weekly"} onChange={() => setPeriod("weekly")} />
             <label htmlFor="weekly" className="ml-2 mr-8">Weekly</label>
-            <input type="radio" id="monthly" name="period_internal" value="monthly" checked={period === "monthly"} onChange={() => setPeriod("monthly")} />
+            <input type="radio" id="monthly_internal" name="period_internal" value="monthly" checked={period === "monthly"} onChange={() => setPeriod("monthly")} />
             <label htmlFor="monthly" className="ml-2 mr-8">Monthly</label>
           </div>
           <DateSetter date={selectedDate} setDate={setSelectedDate} maxDate={maxDate}/>
@@ -202,11 +201,11 @@ const InternalTxsBar  = () => {
         { selectedDate && period === "monthly" && <p>{formatMonthlyDatesForGHRepo(selectedDate).replaceAll("_", " ")}</p>}
         </div>
         { chartData && 
-        <div className="h-[300px] w-[700px]">
+        <div className="h-[400px] w-[800px] flex items-center justify-center">
           <Bar 
             data={chartData} 
             options={chartOptions}
-            className='barChartBox'
+            className='w-full h-full'
           /> 
         </div>
         }
