@@ -146,6 +146,7 @@ const TokenTransfersBarChart = () => {
   }
 
   setChartData(chartData)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
 }, [tokenTransferData, option])
 
 const getPos = () => {

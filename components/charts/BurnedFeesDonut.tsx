@@ -188,7 +188,7 @@ const BurnedFeesDonut = () => {
         { selectedDate && period === "monthly" && <p>{formatMonthlyDatesForGHRepo(selectedDate).replaceAll("_", " ")}</p>}
         </div>
         { chartData && 
-        <div className="border">
+        <div className="">
           <Doughnut 
             data={chartData} 
             options={chartOptions}
