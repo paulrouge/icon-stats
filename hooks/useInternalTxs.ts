@@ -21,39 +21,6 @@ import { period } from '@/components/charts/BurnedFeesDonut';
 const useInternalTxs = () => {
   const [csvData, setCsvData] = useState('');
   const [txDataInternal, setTxDataInternal] = useState<txDataResponse[]>([]);
-  const [date, setDate] = useState<Date|null>(null);
-  const [txDailyUrl, setTxDailyUrl] = useState<string|null>(null);
-  
-
-  useEffect(() => {
-    if (date) {
-      const url = urlBuilderTransactions(formatDateForGHRepo(date),'daily')
-      setTxDailyUrl(url)
-    }
-  }, [date])
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch(txDailyUrl!);
-        
-        if (response.ok) {
-          const data = await response.text();
-          setCsvData(data);
-        } else {
-          console.error('Request failed with status', response.status);
-        }
-      } catch (error) {
-        console.error('An error occurred', error);
-      }
-    };
-
-    if (txDailyUrl){
-      fetchData();
-    }
-
-  }, [txDailyUrl]);
-
 
   useEffect(() => {
     if (csvData) {

@@ -197,7 +197,7 @@ const RegTxsBar = () => {
           <Bar 
             data={chartData} 
             options={chartOptions}
-            className='w-full h-96'
+            className='w-[800px] h-[400px]'
           /> 
         </div>
         }

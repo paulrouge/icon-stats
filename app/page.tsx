@@ -4,6 +4,7 @@ import { Inter, Noto_Sans, Rubik } from 'next/font/google'
 import BurnedFeesDonut from '@/components/charts/BurnedFeesDonut'
 import RegTxsBar from '@/components/charts/RegTxsBar'
 import InternalTxsBar from '@/components/charts/InternalTxsBar'
+import TokenTransfersBarChart from '@/components/charts/TokenTransfersBarChart'
 
 const notoSans = Noto_Sans({ 
   subsets: ['latin'],
@@ -24,6 +25,7 @@ export default function Home() {
     flex min-h-screen flex-col items-center justify-between md:p-24 text-gray-900 gap-12
     ${rubik.className}
     `}>
+      <TokenTransfersBarChart />
       <BurnedFeesDonut />
       <RegTxsBar />
       <InternalTxsBar />

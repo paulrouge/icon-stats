@@ -72,12 +72,12 @@ const InternalTxsBar  = () => {
     }
   }, [fetchTxs, selectedDate, period])
 
-  const groups: Record<string, number> = {};
+  
 
   // prepare the data for the chart
   useEffect(() => {
     setChartData(null)
-
+    const groups: Record<string, number> = {};
     if (txDataInternal) {
       // loop through the txData
       txDataInternal.forEach((tx) => {

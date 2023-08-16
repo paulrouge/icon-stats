@@ -1,4 +1,4 @@
-import React, {use, useEffect, useState} from 'react'
+import { useEffect, useState} from 'react'
 import { txDataResponse } from '@/types/types';
 import { urlBuilderTransactions, formatDateForGHRepo, formatWeeklyDatesForGHRepo, formatMonthlyDatesForGHRepo } from '@/utils/utils';
 import { period } from '@/components/charts/BurnedFeesDonut';
@@ -21,46 +21,23 @@ import { period } from '@/components/charts/BurnedFeesDonut';
 const useBurnedFees = () => {
   const [csvData, setCsvData] = useState('');
   const [txDataBurnedFees, setTxDataBurnedFees] = useState<txDataResponse[]>([]);
-  const [txDailyUrl, setTxDailyUrl] = useState<string|null>(null);
-  
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch(txDailyUrl!);
-        if (response.ok) {
-          const data = await response.text();
-          setCsvData(data);
-        } else {
-          console.error('Request failed with status', response.status);
-        }
-      } catch (error) {
-        console.error('An error occurred', error);
-      }
-    };
-
-    if (txDailyUrl){
-      fetchData();
-    }
-
-  }, [txDailyUrl]);
-
 
   useEffect(() => {
     if (csvData) {
       const rows = csvData.split('\n');
       // const headers = rows[0].split(',');
       const txData = rows.slice(1).map(row => {
-          const values = row.split(',');
-          const txData: txDataResponse = {
-              to: values[0],
-              ["Regular Tx"]: Number(values[1]),
-              ["Fees burned"]: Number(values[2]),
-              ["to_def"]: values[3],
-              ["Internal Tx"]: Number(values[4]),
-              ["Internal Event (excluding Tx)"]: Number(values[5]),
-              group: values[6],
-          }
-          return txData
+        const values = row.split(',');
+        const txData: txDataResponse = {
+          to: values[0],
+          ["Regular Tx"]: Number(values[1]),
+          ["Fees burned"]: Number(values[2]),
+          ["to_def"]: values[3],
+          ["Internal Tx"]: Number(values[4]),
+          ["Internal Event (excluding Tx)"]: Number(values[5]),
+          group: values[6],
+        }
+        return txData
       })
 
       // sort by fees burned
