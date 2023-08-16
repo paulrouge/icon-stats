@@ -7,3 +7,13 @@ export type txDataResponse = {
     ["Internal Event (excluding Tx)"]: number,
     group: string,
 }
+
+export type tokenDataResponse = {
+    ["IRC Token"]: string,
+    holders: number,
+    liquidity: number,
+    amount: number,
+    ["No. of Transactions"]: number,
+    ["Price in USD"]: number,
+    ["Value Transferred in USD"]: number,
+}
