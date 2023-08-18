@@ -67,11 +67,12 @@ const BurnedFeesDonut = () => {
     }
   }, [fetchTxs, selectedDate, period])
 
-  // make an object with grouped data
-  const groups: Record<string, number> = {};
+
 
   // prepare the data for a donut chart
   useEffect(() => {
+    // make an object with grouped data
+    const groups: Record<string, number> = {};
     
     if (txDataBurnedFees) {
       // loop through the txData
