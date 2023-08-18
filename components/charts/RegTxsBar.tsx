@@ -31,8 +31,11 @@ ChartJS.register(
 import { Line, Bar, Scatter, Bubble } from 'react-chartjs-2'
 import useRegularTxs from '@/hooks/useRegularTxs';
 import DateSetter from '../ui/DateSetter';
-import { period } from './BurnedFeesDonut';
+import { period } from './BurnedFeesDoughnut';
 import { formatDateForGHRepo, formatWeeklyDatesForGHRepo, formatMonthlyDatesForGHRepo } from '@/utils/utils';
+import { Scale } from '@/types/types';
+import LogLin from '../ui/LogLin';
+import { scaleHelper } from '@/utils/utils';
 
 type ChartData = {
   labels: string[],
@@ -53,6 +56,7 @@ const RegTxsBar = () => {
   const [chartData, setChartData] = useState<ChartData|null>(null)
   const [period, setPeriod] = useState<period>('weekly')
   const [selectedDate, setSelectedDate] = useState<Date|null>(null)
+  const [selectedScale, setSelectedScale] = useState<Scale>(Scale.lin)
   const [maxDate, setMaxDate] = useState<Date|null>(null)
 
   // set the initial date to yesterday, the max date should also be yesterday and stay that way
@@ -131,7 +135,7 @@ const RegTxsBar = () => {
   const chartOptions = {
     scales: {
       myScale: {
-        type: 'logarithmic',
+        type: scaleHelper(selectedScale),
         position: 'right', // `axis` is determined by the position as `'y'`
         // axis: 'y',
       }
@@ -199,6 +203,7 @@ const RegTxsBar = () => {
             options={chartOptions}
             className='w-[800px] h-[400px]'
           /> 
+          <LogLin scale={selectedScale} setSelectedScale={setSelectedScale}/>
         </div>
         }
       </div>

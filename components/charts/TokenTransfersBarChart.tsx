@@ -1,4 +1,4 @@
-import React, {useEffect, useState, useRef} from 'react'
+import React, {useEffect, useState } from 'react'
 import { 
   Chart as ChartJS,
   CategoryScale,
@@ -13,7 +13,7 @@ import {
   ArcElement,
   LogarithmicScale
 } from 'chart.js'
-import { Doughnut } from 'react-chartjs-2';
+
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -28,8 +28,11 @@ ChartJS.register(
   LogarithmicScale
 )
 import DateSetter from '../ui/DateSetter';
-import { Line, Bar, Scatter, Bubble, getElementAtEvent } from 'react-chartjs-2'
+import { Bar } from 'react-chartjs-2'
 import useTokenTransfers from '@/hooks/useTokenTransfers';
+import { Scale } from '@/types/types';
+import LogLin from '../ui/LogLin';
+import { scaleHelper } from '@/utils/utils';
 
 type ChartData = {
   labels: string[],
@@ -43,7 +46,6 @@ type ChartData = {
   }[]
 }
 
-  
 // array of colors for the chart
 const bgColors:string[] = ['#54478c', '#2c699a', '#048ba8', '#0db39e', '#16db93', '#83e377', '#b9e769', '#efea5a', '#f1c453', '#f29e4c', '#f4845f', '#f76f8e', '#e15b97', '#c9406a', '#a9225c', '#831843', '#4b202e', '#2a0c3a', '#050c3a', '#0c2e3d', '#183d3f', '#1e4d2b', '#1e4d2b', '#345e3f', '#4b6e51', '#627e63', '#7a8e75', '#93a085', '#aeb096', '#c8c8a9', '#e3e3bd', '#ffffd4']
 
@@ -61,12 +63,13 @@ const TokenTransfersBarChart = () => {
   const [chartData, setChartData] = useState<ChartData|null>(null)
   const [selectedDate, setSelectedDate] = useState<Date|null>(null)
   const [maxDate, setMaxDate] = useState<Date|null>(null)
+  const [selectedScale, setSelectedScale] = useState<Scale>(Scale.lin)
   const [windowWidth, setWindowWidth] = useState<number>(0)
   const [option, setOption] = useState<options>('transactions')
-  
+
+
   // hold the data for the chart
   const [arrs, setArrs] = useState<any>({})
-
 
   // set the initial date to yesterday, the max date should also be yesterday and stay that way
   useEffect(() => {
@@ -160,7 +163,7 @@ const getPos = () => {
 const chartOptions = {
   scales: {
     myScale: {
-      type: 'logarithmic',
+      type: scaleHelper(selectedScale),
       position: 'right', // `axis` is determined by the position as `'y'`
     }
   },
@@ -223,15 +226,14 @@ return (
           </div>
           <DateSetter date={selectedDate} setDate={setSelectedDate} maxDate={maxDate}/>
         </div>
-      {/* </div> */}
-
       { chartData && 
-      <div className="h-[400px] w-[800px] flex items-center justify-center">
+      <div className="h-[400px] w-[800px] flex flex-col items-center justify-center">
         <Bar 
           data={chartData} 
           options={chartOptions}
           className='w-full h-full'
         /> 
+        <LogLin scale={selectedScale} setSelectedScale={setSelectedScale}/>
       </div>
       }
     </div>

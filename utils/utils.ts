@@ -1,6 +1,6 @@
-import { period } from "@/components/charts/BurnedFeesDonut"
+import { period } from "@/components/charts/BurnedFeesDoughnut"
 import { baseURLTransactionData } from "./constants"
-
+import { Scale } from "@/types/types"
 
 export const urlBuilderTransactions = (_dateString: string, _period: period) => {  
     let url = ''
@@ -48,4 +48,12 @@ export const formatMonthlyDatesForGHRepo = (date: Date) => {
     const firstDay = formatDateForGHRepo(new Date(date.getTime() - 29 * 24 * 60 * 60 * 1000))
 
     return `${firstDay}_to_${lastDay}`
+}
+
+export const scaleHelper = (scale:Scale) => {
+    if (scale === Scale.lin) {
+        return 'linear'
+    } else {
+        return 'logarithmic'
+    }
 }

@@ -1,7 +1,7 @@
 import { useEffect, useState} from 'react'
 import { txDataResponse } from '@/types/types';
 import { urlBuilderTransactions, formatDateForGHRepo, formatWeeklyDatesForGHRepo, formatMonthlyDatesForGHRepo } from '@/utils/utils';
-import { period } from '@/components/charts/BurnedFeesDonut';
+import { period } from '@/components/charts/BurnedFeesDoughnut';
 
 /**
  * to do:

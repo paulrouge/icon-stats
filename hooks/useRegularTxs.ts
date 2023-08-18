@@ -1,7 +1,7 @@
 import React, {use, useEffect, useState} from 'react'
 import { txDataResponse } from '@/types/types';
 import { urlBuilderTransactions, formatDateForGHRepo, formatWeeklyDatesForGHRepo, formatMonthlyDatesForGHRepo } from '@/utils/utils';
-import { period } from '@/components/charts/BurnedFeesDonut';
+import { period } from '@/components/charts/BurnedFeesDoughnut';
 
 const useRegularTxs = () => {
   const [csvData, setCsvData] = useState('');

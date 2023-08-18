@@ -1,22 +1,7 @@
 import React, {use, useEffect, useState} from 'react'
 import { txDataResponse } from '@/types/types';
 import { urlBuilderTransactions, formatDateForGHRepo, formatWeeklyDatesForGHRepo, formatMonthlyDatesForGHRepo } from '@/utils/utils';
-import { period } from '@/components/charts/BurnedFeesDonut';
-
-/**
- * to do:
- * transactions - daily, weekly, monthly
- * internal transactions - daily, weekly, monthly
- * burned ICX - daily, weekly, monthly
- * Trends
- * IRC Tokens - Daily token transfers
- * Exhange Data
- * 
- * 
- * 1. I think we need a function that builds the URL based on the date
- * 2. We need to fetch the data from the URL
- * 3. make a usestate for each of the data types, that is set by the fetch function
- */
+import { period } from '@/components/charts/BurnedFeesDoughnut';
 
 const useInternalTxs = () => {
   const [csvData, setCsvData] = useState('');

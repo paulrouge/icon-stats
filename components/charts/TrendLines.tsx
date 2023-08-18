@@ -25,11 +25,10 @@ ChartJS.register(
   Filler,
   ArcElement
 )
-
-import { getElementAtEvent } from 'react-chartjs-2'
-import useFetchTxData from '@/hooks/useBurnedFees'
 import DateSetter from '../ui/DateSetter';
+import { Line, Bar, Scatter, Bubble, getElementAtEvent } from 'react-chartjs-2'
 import { formatDateForGHRepo, formatWeeklyDatesForGHRepo, formatMonthlyDatesForGHRepo } from '@/utils/utils';
+import useTrends from '@/hooks/useTrends';
 
 type ChartData = {
   labels: string[],
@@ -45,16 +44,19 @@ type ChartData = {
 // array of colors for the chart
 const bgColors:string[] = ['#54478c', '#2c699a', '#048ba8', '#0db39e', '#16db93', '#83e377', '#b9e769', '#efea5a', '#f1c453', '#f29e4c', '#f4845f', '#f76f8e', '#e15b97', '#c9406a', '#a9225c', '#831843', '#4b202e', '#2a0c3a', '#050c3a', '#0c2e3d', '#183d3f', '#1e4d2b', '#1e4d2b', '#345e3f', '#4b6e51', '#627e63', '#7a8e75', '#93a085', '#aeb096', '#c8c8a9', '#e3e3bd', '#ffffd4']
 
-export type period = 'daily' | 'weekly' | 'monthly'
 
-const BurnedFeesDonut = () => {
-  const [period, setPeriod] = useState<period>('weekly')
-  const {txDataBurnedFees, fetchTxs} = useFetchTxData()
+const TrendLines  = () => {
+  const { trends, fetchTrends} = useTrends()
   const [chartData, setChartData] = useState<ChartData|null>(null)
   const [selectedDate, setSelectedDate] = useState<Date|null>(null)
   const [maxDate, setMaxDate] = useState<Date|null>(null)
-  const chartRef = useRef();
- 
+  const [windowWidth, setWindowWidth] = useState<number>(0)
+
+  // get the window width
+  useEffect(() => {
+    setWindowWidth(window.innerWidth)
+  }, [])
+
   // set the initial date to yesterday, the max date should also be yesterday and stay that way
   useEffect(() => {
     const yesterday = new Date(Date.now() - 864e5)
@@ -64,40 +66,21 @@ const BurnedFeesDonut = () => {
 
   useEffect(() => {
     if (selectedDate) {
-      fetchTxs(period, selectedDate)
+      fetchTrends(selectedDate)
     }
-  }, [fetchTxs, selectedDate, period])
+  }, [fetchTrends, selectedDate])
 
-  // make an object with grouped data
-  const groups: Record<string, number> = {};
+  
 
-  // prepare the data for a donut chart
+  // prepare the data for the chart
   useEffect(() => {
-    
-    if (txDataBurnedFees) {
+    setChartData(null)
+    const groups: Record<string, number> = {};
+    if (trends) {
       // loop through the txData
-      txDataBurnedFees.forEach((tx) => {
-        // shorten long group names
-        if (tx.group === "Code Metal Rewards Distribution") {
-          tx.group = "Code Metal"
-        }
-
-        if (tx.group === undefined) {
-          return
-        }
-
-        // if group doesn't exist, create it
-        if (!groups[tx.group]) {
-          groups[tx.group] = 0
-        }
-        // add the tx value to the group
-        groups[tx.group] += Number(Number(tx["Fees burned"]).toFixed(2))
-
-        // remove the group if it's < 2
-        if (groups[tx.group] < 2) {
-          delete groups[tx.group]
-        }
-      })
+      // trends.forEach((date) => {
+      //   // do stuff if needed
+      // })
     }
 
     // create the chart data
@@ -105,7 +88,7 @@ const BurnedFeesDonut = () => {
       labels: Object.keys(groups),
       datasets: [
         {
-          label: 'Burned Fees',
+          label: 'Internal Txs',
           data: Object.values(groups),
           backgroundColor: bgColors,
           borderColor: [
@@ -117,37 +100,40 @@ const BurnedFeesDonut = () => {
     }
 
     setChartData(chartData)
-  }, [txDataBurnedFees])
+  }, [])
 
+  const getPos = () => {
+    if (windowWidth < 768) {
+      return 'bottom'
+    } else {
+      return 'left'
+    }
+  }
 
   const chartOptions = {
     plugins: {
       legend: {
-        // onClick: (event:any, legendItem:any) => {
-        //   const chart = event.chart;
-        //   console.log(chart.defaults)
-        //   const datasetIndex = legendItem.index;
-        //   const dataset = chart.data.datasets[0].data[datasetIndex];
-        //   // console.log(dataset)
-        //   // // Toggle the visibility of the dataset
-        //   // dataset.hidden = dataset.hidden === null ? !dataset.hidden : null;
-  
-        //   // chart.update();
-        // },
-        position: 'left',
+        position: getPos(),
         align: 'center',
-        labels: 
-        {
+        maintainAspectRatio: false,
+        responsive: true,
+        display: false,
+        labels: {
           generateLabels: (chart:any) => {
+            if (windowWidth < 768) {
+              return []
+            }
             const data = chart.data;
-        
+
             if (data.labels.length && data.datasets.length) {
+              // console.log('amount of entries', data.labels.length, data)
+              
               return data.labels.map((label:string, index:number) => {
                 const dataset = data.datasets[0];
-                const value = dataset.data[index].toFixed(2);
+                const value = dataset.data[index].toFixed(0);
                 const backgroundColor = dataset.backgroundColor[index];
                 const borderColor = dataset.borderColor[index];
-                
+
                 return {
                   text: `${label}: ${value}`,
                   fillStyle: backgroundColor,
@@ -160,41 +146,27 @@ const BurnedFeesDonut = () => {
             }
             return [];
           },
-        },
+        },        
       },
     },
   } as any;
-
+  
   return (
     <div>
       <div className="py-6 px-12 rounded-xl border rounded-xl bg-white shadow-lg">
         <div className="flex items-center">
-          <h2 className="text-5xl font-bold">Burned Fees</h2>  
+          <h2 className="md:text-5xl text-2xl font-bold">Internal Transactions</h2>   
         </div>
         <div className="flex items-center justify-between">
-          <div>
-            <input type="radio" id="daily_burned" name="period_burned" value="daily" checked={period === "daily"} onChange={() => setPeriod("daily")} />
-            <label htmlFor="daily" className="ml-2 mr-8">Daily</label>
-            <input type="radio" id="weekly__burned" name="period_burned" value="weekly" checked={period === "weekly"} onChange={() => setPeriod("weekly")} />
-            <label htmlFor="weekly" className="ml-2 mr-8">Weekly</label>
-            <input type="radio" id="monthly__burned" name="period_burned" value="monthly" checked={period === "monthly"} onChange={() => setPeriod("monthly")} />
-            <label htmlFor="monthly" className="ml-2 mr-8">Monthly</label>
-          </div>
+
           <DateSetter date={selectedDate} setDate={setSelectedDate} maxDate={maxDate}/>
         </div>
-        <div className='text-sm text-gray-500 my-4'>
-        { selectedDate && period === "daily" && <p>{formatDateForGHRepo(selectedDate)}</p>}
-        { selectedDate && period === "weekly" && <p>{formatWeeklyDatesForGHRepo(selectedDate).replaceAll("_", " ")}</p>}
-        { selectedDate && period === "monthly" && <p>{formatMonthlyDatesForGHRepo(selectedDate).replaceAll("_", " ")}</p>}
-        </div>
         { chartData && 
-        <div className="">
-          <Doughnut 
+        <div className="h-[400px] w-[800px] flex items-center justify-center">
+          <Bar 
             data={chartData} 
             options={chartOptions}
-            className='h-[300px] w-[700px]'
-            ref={chartRef}
-            // onClick={onClick}
+            className='w-full h-full'
           /> 
         </div>
         }
@@ -203,4 +175,4 @@ const BurnedFeesDonut = () => {
   )
 }
 
-export default BurnedFeesDonut
+export default TrendLines

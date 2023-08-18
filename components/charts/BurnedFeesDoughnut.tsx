@@ -12,7 +12,7 @@ import {
   Filler,
   ArcElement,
 } from 'chart.js'
-
+import { Doughnut } from 'react-chartjs-2';
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -25,14 +25,10 @@ ChartJS.register(
   Filler,
   ArcElement
 )
+
+import useFetchTxData from '@/hooks/useBurnedFees'
 import DateSetter from '../ui/DateSetter';
-import { period } from './BurnedFeesDoughnut';
-import { Bar } from 'react-chartjs-2'
-import useInternalTxs from '@/hooks/useInternalTxs'
 import { formatDateForGHRepo, formatWeeklyDatesForGHRepo, formatMonthlyDatesForGHRepo } from '@/utils/utils';
-import { Scale } from '@/types/types';
-import LogLin from '../ui/LogLin';
-import { scaleHelper } from '@/utils/utils';
 
 type ChartData = {
   labels: string[],
@@ -48,21 +44,16 @@ type ChartData = {
 // array of colors for the chart
 const bgColors:string[] = ['#54478c', '#2c699a', '#048ba8', '#0db39e', '#16db93', '#83e377', '#b9e769', '#efea5a', '#f1c453', '#f29e4c', '#f4845f', '#f76f8e', '#e15b97', '#c9406a', '#a9225c', '#831843', '#4b202e', '#2a0c3a', '#050c3a', '#0c2e3d', '#183d3f', '#1e4d2b', '#1e4d2b', '#345e3f', '#4b6e51', '#627e63', '#7a8e75', '#93a085', '#aeb096', '#c8c8a9', '#e3e3bd', '#ffffd4']
 
+export type period = 'daily' | 'weekly' | 'monthly'
 
-const InternalTxsBar  = () => {
+const BurnedFeesDonut = () => {
   const [period, setPeriod] = useState<period>('weekly')
-  const { txDataInternal, fetchTxs } = useInternalTxs()
+  const {txDataBurnedFees, fetchTxs} = useFetchTxData()
   const [chartData, setChartData] = useState<ChartData|null>(null)
   const [selectedDate, setSelectedDate] = useState<Date|null>(null)
   const [maxDate, setMaxDate] = useState<Date|null>(null)
-  const [selectedScale, setSelectedScale] = useState<Scale>(Scale.lin)
-  const [windowWidth, setWindowWidth] = useState<number>(0)
-
-  // get the window width
-  useEffect(() => {
-    setWindowWidth(window.innerWidth)
-  }, [])
-
+  const chartRef = useRef();
+ 
   // set the initial date to yesterday, the max date should also be yesterday and stay that way
   useEffect(() => {
     const yesterday = new Date(Date.now() - 864e5)
@@ -76,28 +67,22 @@ const InternalTxsBar  = () => {
     }
   }, [fetchTxs, selectedDate, period])
 
-  
+  // make an object with grouped data
+  const groups: Record<string, number> = {};
 
-  // prepare the data for the chart
+  // prepare the data for a donut chart
   useEffect(() => {
-    setChartData(null)
-    const groups: Record<string, number> = {};
-    if (txDataInternal) {
+    
+    if (txDataBurnedFees) {
       // loop through the txData
-      txDataInternal.forEach((tx) => {
-
-        const groupsToIgnore = ['System', 'governance', 'undefined','0']
-        // if the group is in the ignore list, skip it
-        if (groupsToIgnore.includes(tx.group)) {
-          return
-        }
-   
-        // if (tx.group === undefined) {
-        //   return
-        // }
-
+      txDataBurnedFees.forEach((tx) => {
+        // shorten long group names
         if (tx.group === "Code Metal Rewards Distribution") {
           tx.group = "Code Metal"
+        }
+
+        if (tx.group === undefined) {
+          return
         }
 
         // if group doesn't exist, create it
@@ -105,7 +90,7 @@ const InternalTxsBar  = () => {
           groups[tx.group] = 0
         }
         // add the tx value to the group
-        groups[tx.group] += Number(Number(tx["Internal Tx"]).toFixed())
+        groups[tx.group] += Number(Number(tx["Fees burned"]).toFixed(2))
 
         // remove the group if it's < 2
         if (groups[tx.group] < 2) {
@@ -119,7 +104,7 @@ const InternalTxsBar  = () => {
       labels: Object.keys(groups),
       datasets: [
         {
-          label: 'Internal Txs',
+          label: 'Burned Fees',
           data: Object.values(groups),
           backgroundColor: bgColors,
           borderColor: [
@@ -131,46 +116,26 @@ const InternalTxsBar  = () => {
     }
 
     setChartData(chartData)
-  }, [txDataInternal])
+  }, [txDataBurnedFees])
 
-  const getPos = () => {
-    if (windowWidth < 768) {
-      return 'bottom'
-    } else {
-      return 'left'
-    }
-  }
 
   const chartOptions = {
-    scales: {
-      myScale: {
-        type: scaleHelper(selectedScale),
-        position: 'right', // `axis` is determined by the position as `'y'`
-      }
-    },
     plugins: {
       legend: {
-        position: getPos(),
+        position: 'left',
         align: 'center',
-        maintainAspectRatio: false,
-        responsive: true,
-        display: false,
-        labels: {
+        labels: 
+        {
           generateLabels: (chart:any) => {
-            if (windowWidth < 768) {
-              return []
-            }
             const data = chart.data;
-
+        
             if (data.labels.length && data.datasets.length) {
-              // console.log('amount of entries', data.labels.length, data)
-              
               return data.labels.map((label:string, index:number) => {
                 const dataset = data.datasets[0];
-                const value = dataset.data[index].toFixed(0);
+                const value = dataset.data[index].toFixed(2);
                 const backgroundColor = dataset.backgroundColor[index];
                 const borderColor = dataset.borderColor[index];
-
+                
                 return {
                   text: `${label}: ${value}`,
                   fillStyle: backgroundColor,
@@ -183,24 +148,24 @@ const InternalTxsBar  = () => {
             }
             return [];
           },
-        },        
+        },
       },
     },
   } as any;
-  
+
   return (
     <div>
       <div className="py-6 px-12 rounded-xl border rounded-xl bg-white shadow-lg">
         <div className="flex items-center">
-          <h2 className="md:text-5xl text-2xl font-bold">Internal Transactions</h2>   
+          <h2 className="text-5xl font-bold">Burned Fees</h2>  
         </div>
         <div className="flex items-center justify-between">
           <div>
-            <input type="radio" id="daily_internal" name="period_internal" value="daily" checked={period === "daily"} onChange={() => setPeriod("daily")} />
+            <input type="radio" id="daily_burned" name="period_burned" value="daily" checked={period === "daily"} onChange={() => setPeriod("daily")} />
             <label htmlFor="daily" className="ml-2 mr-8">Daily</label>
-            <input type="radio" id="weekly_internal" name="period_internal" value="weekly" checked={period === "weekly"} onChange={() => setPeriod("weekly")} />
+            <input type="radio" id="weekly__burned" name="period_burned" value="weekly" checked={period === "weekly"} onChange={() => setPeriod("weekly")} />
             <label htmlFor="weekly" className="ml-2 mr-8">Weekly</label>
-            <input type="radio" id="monthly_internal" name="period_internal" value="monthly" checked={period === "monthly"} onChange={() => setPeriod("monthly")} />
+            <input type="radio" id="monthly__burned" name="period_burned" value="monthly" checked={period === "monthly"} onChange={() => setPeriod("monthly")} />
             <label htmlFor="monthly" className="ml-2 mr-8">Monthly</label>
           </div>
           <DateSetter date={selectedDate} setDate={setSelectedDate} maxDate={maxDate}/>
@@ -211,19 +176,19 @@ const InternalTxsBar  = () => {
         { selectedDate && period === "monthly" && <p>{formatMonthlyDatesForGHRepo(selectedDate).replaceAll("_", " ")}</p>}
         </div>
         { chartData && 
-          <div className="h-[400px] w-[800px] flex flex-col items-center justify-center">
-            <Bar 
+          <div className="">
+            <Doughnut 
               data={chartData} 
               options={chartOptions}
-              className='w-full h-full'
+              className='h-[300px] w-[700px]'
+              ref={chartRef}
+              // onClick={onClick}
             /> 
-            <LogLin scale={selectedScale} setSelectedScale={setSelectedScale}/>
           </div>
         }
-
       </div>
     </div>
   )
 }
 
-export default InternalTxsBar
+export default BurnedFeesDonut
