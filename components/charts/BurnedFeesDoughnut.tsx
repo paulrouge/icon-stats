@@ -29,6 +29,7 @@ ChartJS.register(
 import useFetchTxData from '@/hooks/useBurnedFees'
 import DateSetter from '../ui/DateSetter';
 import { formatDateForGHRepo, formatWeeklyDatesForGHRepo, formatMonthlyDatesForGHRepo } from '@/utils/utils';
+import { COLORS } from '@/utils/constants';
 
 type ChartData = {
   labels: string[],
@@ -107,7 +108,7 @@ const BurnedFeesDonut = () => {
         {
           label: 'Burned Fees',
           data: Object.values(groups),
-          backgroundColor: bgColors,
+          backgroundColor: COLORS,
           borderColor: [
             'rgba(255, 255, 255, 0.6)',
           ],

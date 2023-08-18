@@ -26,7 +26,7 @@ ChartJS.register(
   ArcElement
 )
 import { exchangeDataResponse } from '@/types/types';
-import { getElementAtEvent } from 'react-chartjs-2'
+import { COLORS } from '@/utils/constants';
 import useExchangeData from '@/hooks/useExchangeData';
 import DateSetter from '../ui/DateSetter';
 
@@ -42,13 +42,13 @@ type ChartData = {
 }
 
 // array of colors for the chart
-const bgColors:string[] = [
-  '#54478c', '#2c699a', '#d18da9', '#0db39e', '#f197a2', '#83e377',
-  '#b9e769', '#2a9d8f', '#e57373', '#175676', '#f4845f', '#f76f8e',
-  '#e15b97', '#2c699a', '#d18da9', '#0db39e', '#f197a2', '#83e377',
-  '#b9e769', '#2a9d8f', '#e57373', '#175676', '#f4845f', '#f76f8e',
-  '#e15b97', '#54478c', '#d18da9', '#0db39e', '#f197a2', '#83e377'
-]; 
+// const bgColors:string[] = [
+//   '#54478c', '#2c699a', '#d18da9', '#0db39e', '#f197a2', '#83e377',
+//   '#b9e769', '#2a9d8f', '#e57373', '#175676', '#f4845f', '#f76f8e',
+//   '#e15b97', '#2c699a', '#d18da9', '#0db39e', '#f197a2', '#83e377',
+//   '#b9e769', '#2a9d8f', '#e57373', '#175676', '#f4845f', '#f76f8e',
+//   '#e15b97', '#54478c', '#d18da9', '#0db39e', '#f197a2', '#83e377'
+// ]; 
 
 export type period = 'daily' | 'weekly' | 'monthly'
 
@@ -98,7 +98,7 @@ const ExchangeDataDonut = () => {
         {
           label: 'Balance',
           data: totals,
-          backgroundColor: bgColors,
+          backgroundColor: COLORS,
           borderColor: [
             'rgba(255, 255, 255, 0.6)',
           ],

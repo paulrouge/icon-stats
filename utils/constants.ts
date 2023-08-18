@@ -1,1 +1,3 @@
 export const baseURLTransactionData = `https://raw.githubusercontent.com/Transcranial-Solutions/ICONProject/master/data_analysis/08_transaction_data/results/`
+
+export const COLORS: string[] = ["#45a6a7", "#47a8a9", "#48a9aa", "#4aacac", "#48435c", "#4c465f", "#4cb0ae", "#4e4c63", "#4e8381", "#505267", "#505768", "#508683", "#525670", "#52babs", "#546675", "#548087", "#556c7a", "#577580", "#57bfb9", "#587885", "#59c3bb", "#5a8488", "#5bc8be", "#5c8e92", "#509798", "#5dcbco", "#60a1a0", "#60cec2", "#62aba7", "#6302c5", "#6586af", "#65d6c8", "#67daca", "#68c188", "#gacoco", "#gadecd", "#6ddac9", "#6dezdo", "#6fe300", "#70e7d3"]
