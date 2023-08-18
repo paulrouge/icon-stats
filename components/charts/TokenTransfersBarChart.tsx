@@ -213,7 +213,7 @@ return (
       <div className="flex items-center justify-between">
         <h2 className="md:text-5xl text-2xl font-bold">Token Transfers</h2>   
       </div>
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between mb-4">
           <div>
             <input type="radio" id="transactions" name="option" value="transactions" checked={option === 'transactions'} onChange={() => setOption('transactions')}/>
             <label className="ml-2 mr-8" htmlFor="transactions">Transactions</label>
