@@ -6,7 +6,7 @@ const EOILink = () => {
   return (
     <Link 
     className='
-    text-sm flex items-center gap-2 fixed top-4 right-4 rounded-full border border-gray-200 bg-gray-50 shadow-lg bg-[#60cec2]
+    text-sm flex items-center gap-2 fixed top-4 right-4 rounded-full border border-gray-200 bg-gray-50 shadow-lg bg-[#59c3bb]
     p-1 text-gray-700 hover:bg-[#4eb3b1] hover:text-gray-300 hover:scale-110 hover:rotate-[30deg] transition duration-300 ease-in-out
     '
     target="_blank"
