@@ -43,6 +43,7 @@ type ChartData = {
     backgroundColor: string[],
     borderColor: string[],
     borderWidth: number,
+    borderRadius: number,
     stack?: string,
   }[]
 }
@@ -130,6 +131,8 @@ const TokenTransfersBarChart = () => {
     prepareDataSets()
   }
 
+  console.log(tokenNames)
+
   // create the chart data
   const chartData:ChartData = {
     labels: tokenNames,
@@ -142,6 +145,7 @@ const TokenTransfersBarChart = () => {
           'rgba(255, 255, 255, 0.6)',
         ],
         borderWidth: 1,
+        borderRadius: 10,
       },
     ],
   }
@@ -150,13 +154,6 @@ const TokenTransfersBarChart = () => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
 }, [tokenTransferData, option])
 
-const getPos = () => {
-  if (windowWidth < 768) {
-    return 'bottom'
-  } else {
-    return 'left'
-  }
-}
 
 const chartOptions = {
   scales: {
@@ -167,40 +164,7 @@ const chartOptions = {
   },
   plugins: {
     legend: {
-      position: getPos(),
-      align: 'center',
-      maintainAspectRatio: false,
-      responsive: true,
       display: false,
-      labels: {
-        generateLabels: (chart:any) => {
-          if (windowWidth < 768) {
-            return []
-          }
-          const data = chart.data;
-
-          if (data.labels.length && data.datasets.length) {
-            // console.log('amount of entries', data.labels.length, data)
-            
-            return data.labels.map((label:string, index:number) => {
-              const dataset = data.datasets[0];
-              const value = dataset.data[index].toFixed(0);
-              const backgroundColor = dataset.backgroundColor[index];
-              const borderColor = dataset.borderColor[index];
-
-              return {
-                text: `${label}: ${value}`,
-                fillStyle: backgroundColor,
-                strokeStyle: borderColor,
-                lineWidth: 1,
-                hidden: false,
-                index: index,
-              };
-            });
-          }
-          return [];
-        },
-      },        
     },
   },
 } as any;

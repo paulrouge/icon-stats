@@ -43,6 +43,7 @@ type ChartData = {
     backgroundColor: string[],
     borderColor: string[],
     borderWidth: number,
+    borderRadius: number,
   }[]
 }
 
@@ -123,6 +124,7 @@ const InternalTxsBar  = () => {
             'rgba(255, 255, 255, 0.6)',
           ],
           borderWidth: 1,
+          borderRadius: 20,
         },
       ],
     }

@@ -28,12 +28,13 @@ export default function Home() {
     flex min-h-screen flex-col items-center justify-between md:p-24 text-gray-900 gap-12
     ${rubik.className}
     `}>
+      <TokenTransfersBarChart />
       <EOILink />
       <TrendLines />
       <BurnedFeesDonut />
       <RegTxsBar />
       <InternalTxsBar />
-      <TokenTransfersBarChart />
+      
       <ExchangeDataDonut />
     </main>
   )

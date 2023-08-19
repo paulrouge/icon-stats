@@ -13,7 +13,7 @@ import {
   ArcElement,
   LogarithmicScale
 } from 'chart.js'
-import { Doughnut } from 'react-chartjs-2';
+
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -46,6 +46,7 @@ type ChartData = {
     backgroundColor: string[],
     borderColor: string[],
     borderWidth: number,
+    borderRadius: number,
   }[]
 }
 
@@ -120,6 +121,7 @@ const RegTxsBar = () => {
             'rgba(255, 255, 255, 0.6)',
           ],
           borderWidth: 1,
+          borderRadius: 40,
         },
       ],
     }
