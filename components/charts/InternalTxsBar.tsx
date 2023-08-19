@@ -1,4 +1,4 @@
-import React, {useEffect, useState, useRef} from 'react'
+import React, {useEffect, useState } from 'react'
 import { 
   Chart as ChartJS,
   CategoryScale,
@@ -74,7 +74,6 @@ const InternalTxsBar  = () => {
     }
   }, [fetchTxs, selectedDate, period])
 
-  
 
   // prepare the data for the chart
   useEffect(() => {
