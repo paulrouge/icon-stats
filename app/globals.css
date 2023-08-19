@@ -17,6 +17,7 @@
 }
 
 body {
+  width: 100%;
   color: rgb(var(--foreground-rgb));
   background: linear-gradient(
       to bottom,
@@ -26,10 +27,6 @@ body {
     rgb(var(--background-start-rgb));
 }
 
-/* .barChartBox{
-  width: 900px;
-  height: 300px !important;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-} */
+input[type='radio'] {
+  accent-color: #1f2020;
+}

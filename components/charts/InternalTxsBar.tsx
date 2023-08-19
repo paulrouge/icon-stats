@@ -187,13 +187,13 @@ const InternalTxsBar  = () => {
   } as any;
   
   return (
-    <div>
+    <div className=''>
       <div className="py-6 px-12 rounded-xl border rounded-xl bg-white shadow-lg">
         <div className="flex items-center">
           <h2 className="md:text-5xl text-2xl font-bold">Internal Transactions</h2>   
         </div>
         <div className="flex items-center justify-between">
-          <div>
+          <div className='radio'>
             <input type="radio" id="daily_internal" name="period_internal" value="daily" checked={period === "daily"} onChange={() => setPeriod("daily")} />
             <label htmlFor="daily" className="ml-2 mr-8">Daily</label>
             <input type="radio" id="weekly_internal" name="period_internal" value="weekly" checked={period === "weekly"} onChange={() => setPeriod("weekly")} />

@@ -149,7 +149,7 @@ const ExchangeDataDonut = () => {
     <div>
       <div className="py-6 px-12 rounded-xl border rounded-xl bg-white shadow-lg">
         <div className="flex flex-row items-center justify-between">
-          <h2 className="text-5xl font-bold">Exchange Data</h2>  
+          <h2 className="text-5xl font-bold">Exchange Balances</h2>  
           <DateSetter date={selectedDate} setDate={setSelectedDate} maxDate={maxDate}/>
         </div>
         { chartData && 
