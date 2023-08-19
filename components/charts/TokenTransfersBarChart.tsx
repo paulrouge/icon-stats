@@ -63,8 +63,8 @@ const TokenTransfersBarChart = () => {
   const [selectedDate, setSelectedDate] = useState<Date|null>(null)
   const [maxDate, setMaxDate] = useState<Date|null>(null)
   const [selectedScale, setSelectedScale] = useState<Scale>(Scale.lin)
-  const [windowWidth, setWindowWidth] = useState<number>(0)
   const [option, setOption] = useState<options>('transactions')
+  const [tokenNames, setTokenNames] = useState<string[]>([])
 
 
   // hold the data for the chart
@@ -86,11 +86,11 @@ const TokenTransfersBarChart = () => {
  // prepare the data for the chart
  useEffect(() => {
   // setChartData(null)
-  const tokenNames: string[] = []
+  setTokenNames([])
   
   if (tokenTransferData) {
     tokenTransferData.forEach((token) => {
-      tokenNames.push(token['IRC Token'])
+      setTokenNames((tokenNames) => [...tokenNames, token['IRC Token']])
     })
   }
 
@@ -131,8 +131,10 @@ const TokenTransfersBarChart = () => {
     prepareDataSets()
   }
 
-  console.log(tokenNames)
+}, [tokenTransferData, option])
 
+// prepare the data for the chart
+useEffect(() => {
   // create the chart data
   const chartData:ChartData = {
     labels: tokenNames,
@@ -151,9 +153,8 @@ const TokenTransfersBarChart = () => {
   }
 
   setChartData(chartData)
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-}, [tokenTransferData, option])
 
+}, [arrs, option, tokenNames])
 
 const chartOptions = {
   scales: {
