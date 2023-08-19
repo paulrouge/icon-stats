@@ -33,6 +33,7 @@ import { formatDateForGHRepo, formatWeeklyDatesForGHRepo, formatMonthlyDatesForG
 import { Scale } from '@/types/types';
 import LogLin from '../ui/LogLin';
 import { scaleHelper } from '@/utils/utils';
+import { COLORS } from '@/utils/constants';
 
 type ChartData = {
   labels: string[],
@@ -44,10 +45,6 @@ type ChartData = {
     borderWidth: number,
   }[]
 }
-
-// array of colors for the chart
-const bgColors:string[] = ['#54478c', '#2c699a', '#048ba8', '#0db39e', '#16db93', '#83e377', '#b9e769', '#efea5a', '#f1c453', '#f29e4c', '#f4845f', '#f76f8e', '#e15b97', '#c9406a', '#a9225c', '#831843', '#4b202e', '#2a0c3a', '#050c3a', '#0c2e3d', '#183d3f', '#1e4d2b', '#1e4d2b', '#345e3f', '#4b6e51', '#627e63', '#7a8e75', '#93a085', '#aeb096', '#c8c8a9', '#e3e3bd', '#ffffd4']
-
 
 const InternalTxsBar  = () => {
   const [period, setPeriod] = useState<period>('weekly')
@@ -121,7 +118,7 @@ const InternalTxsBar  = () => {
         {
           label: 'Internal Txs',
           data: Object.values(groups),
-          backgroundColor: bgColors,
+          backgroundColor: COLORS,
           borderColor: [
             'rgba(255, 255, 255, 0.6)',
           ],

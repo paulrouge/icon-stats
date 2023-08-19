@@ -157,7 +157,7 @@ const ExchangeDataDonut = () => {
             <Doughnut 
               data={chartData} 
               options={chartOptions}
-              className='h-[300px] w-[700px]'
+              className='h-[300px] w-[800px]'
               ref={chartRef}
               // onClick={onClick}
             /> 
