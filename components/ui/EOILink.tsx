@@ -1,12 +1,12 @@
 import React from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-//4eb3b1
+//#4eb3b1 //#63d2c5
 const EOILink = () => {
   return (
     <Link 
     className='
-    fixed top-4 right-4 rounded-full border border-gray-200 shadow-lg bg-[#4eb3b1]
+    fixed top-4 right-4 rounded-full border border-gray-200 shadow-lg bg-[#63d2c5]
     p-1 text-gray-700 hover:bg-[#4eb3b1] hover:text-gray-300 hover:scale-110 hover:rotate-[30deg] transition duration-300 ease-in-out
     '
     target="_blank"
