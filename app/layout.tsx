@@ -15,7 +15,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body className={`${inter.className} px-2 py-2 min-h-screen overflow-scroll relative justify-center items-center pt-60 md:pt-60 pb-20 lg:pt-24`}>
         {children}
         <Analytics />
       </body>

@@ -55,7 +55,7 @@ const RegTxsBar = () => {
   const [chartData, setChartData] = useState<ChartData|null>(null)
   const [period, setPeriod] = useState<period>('weekly')
   const [selectedDate, setSelectedDate] = useState<Date|null>(null)
-  const [selectedScale, setSelectedScale] = useState<Scale>(Scale.lin)
+  const [selectedScale, setSelectedScale] = useState<Scale>(Scale.log)
   const [maxDate, setMaxDate] = useState<Date|null>(null)
 
   // set the initial date to yesterday, the max date should also be yesterday and stay that way
@@ -173,12 +173,12 @@ const RegTxsBar = () => {
   } as any;
 
   return (
-    <div>
-      <div className="py-6 px-12 rounded-xl border rounded-xl bg-white shadow-lg">
+    <div className='w-full lg:w-2/3'>
+      <div className="md:py-6 md:px-12 p-2 rounded-xl border rounded-xl bg-white shadow-lg">
         <div className="flex items-center justify-between">
-          <h2 className="text-5xl font-bold">Regular Transactions</h2>   
+          <h2 className="lg:text-5xl text-2xl font-bold">Regular Transactions</h2>   
         </div>
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between flex-col md:flex-row text-xs md:text-base gap-4 md:gap-0">
           <div>
             <input type="radio" id="daily_regular" name="period_regular" value="daily" checked={period === "daily"} onChange={() => setPeriod("daily")} />
             <label htmlFor="daily" className="ml-2 mr-8">Daily</label>
@@ -187,7 +187,9 @@ const RegTxsBar = () => {
             <input type="radio" id="monthly_regular" name="period_regular" value="monthly" checked={period === "monthly"} onChange={() => setPeriod("monthly")} />
             <label htmlFor="monthly" className="ml-2 mr-8">Monthly</label>
           </div>
-          <DateSetter date={selectedDate} setDate={setSelectedDate} maxDate={maxDate}/>
+          <div className="text-xs lg:text-base">
+            <DateSetter date={selectedDate} setDate={setSelectedDate} maxDate={maxDate}/>
+          </div>
         </div>
         <div className='text-sm text-gray-500 my-4'>
         { selectedDate && period === "daily" && <p>{formatDateForGHRepo(selectedDate)}</p>}
@@ -195,11 +197,11 @@ const RegTxsBar = () => {
         { selectedDate && period === "monthly" && <p>{formatMonthlyDatesForGHRepo(selectedDate).replaceAll("_", " ")}</p>}
         </div>
         { chartData && 
-        <div className="">
+        <div className="relative w-full">
           <Bar 
             data={chartData} 
             options={chartOptions}
-            className='w-[800px] h-[400px]'
+            className='w-full'
           /> 
           <LogLin scale={selectedScale} setSelectedScale={setSelectedScale}/>
         </div>

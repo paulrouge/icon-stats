@@ -53,7 +53,7 @@ const InternalTxsBar  = () => {
   const [chartData, setChartData] = useState<ChartData|null>(null)
   const [selectedDate, setSelectedDate] = useState<Date|null>(null)
   const [maxDate, setMaxDate] = useState<Date|null>(null)
-  const [selectedScale, setSelectedScale] = useState<Scale>(Scale.lin)
+  const [selectedScale, setSelectedScale] = useState<Scale>(Scale.log)
   const [windowWidth, setWindowWidth] = useState<number>(0)
 
   // get the window width
@@ -187,12 +187,12 @@ const InternalTxsBar  = () => {
   } as any;
   
   return (
-    <div className=''>
-      <div className="py-6 px-12 rounded-xl border rounded-xl bg-white shadow-lg">
+    <div className='w-full lg:w-2/3'>
+      <div className="md:py-6 md:px-12 p-2 rounded-xl border rounded-xl bg-white shadow-lg">
         <div className="flex items-center">
-          <h2 className="md:text-5xl text-2xl font-bold">Internal Transactions</h2>   
+          <h2 className="lg:text-5xl text-2xl font-bold">Internal Transactions</h2>   
         </div>
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between flex-col md:flex-row text-xs md:text-base gap-4 md:gap-0">
           <div className='radio'>
             <input type="radio" id="daily_internal" name="period_internal" value="daily" checked={period === "daily"} onChange={() => setPeriod("daily")} />
             <label htmlFor="daily" className="ml-2 mr-8">Daily</label>
@@ -201,19 +201,21 @@ const InternalTxsBar  = () => {
             <input type="radio" id="monthly_internal" name="period_internal" value="monthly" checked={period === "monthly"} onChange={() => setPeriod("monthly")} />
             <label htmlFor="monthly" className="ml-2 mr-8">Monthly</label>
           </div>
-          <DateSetter date={selectedDate} setDate={setSelectedDate} maxDate={maxDate}/>
+          <div className="text-xs lg:text-base">
+            <DateSetter date={selectedDate} setDate={setSelectedDate} maxDate={maxDate}/>
+          </div>
         </div>
-        <div className='text-sm text-gray-500 my-4'>
+        <div className='text-xs md:text-sm text-gray-500 my-4'>
         { selectedDate && period === "daily" && <p>{formatDateForGHRepo(selectedDate)}</p>}
         { selectedDate && period === "weekly" && <p>{formatWeeklyDatesForGHRepo(selectedDate).replaceAll("_", " ")}</p>}
         { selectedDate && period === "monthly" && <p>{formatMonthlyDatesForGHRepo(selectedDate).replaceAll("_", " ")}</p>}
         </div>
         { chartData && 
-          <div className="h-[400px] w-[800px] flex flex-col items-center justify-center">
+          <div className="relative flex flex-col items-center justify-center w-full">
             <Bar 
               data={chartData} 
               options={chartOptions}
-              className='w-full h-full'
+              className='md:h-[400px] md:w-[800px] w-full'
             /> 
             <LogLin scale={selectedScale} setSelectedScale={setSelectedScale}/>
           </div>

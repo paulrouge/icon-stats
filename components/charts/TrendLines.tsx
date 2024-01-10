@@ -145,8 +145,6 @@ const TrendLines  = () => {
 
   }, [selectedDataset, regTxArray, intTxArray, burnedFeesArray, combinedTxsArray])
 
-
-
   const getPos = () => {
     if (windowWidth < 768) {
       return 'bottom'
@@ -197,25 +195,33 @@ const TrendLines  = () => {
   } as any;
   
   return (
-    <div>
-      <div className="py-6 px-12 rounded-xl border rounded-xl bg-white shadow-lg">
+    <div className='w-full lg:w-2/3'>
+      <div className="md:py-6 md:px-12 p-2 rounded-xl border rounded-xl bg-white shadow-lg">
         <div className="flex items-center">
-          <h2 className="md:text-5xl text-2xl font-bold">Trends YTD</h2>   
+          <h2 className="lg:text-5xl text-2xl font-bold">Trends YTD</h2>   
         </div>
-        <div className="flex items-center gap-4 mb-4">
-          <input type="radio" name="dataset" id="regularTxs" value="regularTxs" checked={selectedDataset === 'regularTxs'} onChange={() => setSelectedDataset('regularTxs')} />
-          <label htmlFor="regularTxs">Regular Txs</label>
-          <input type="radio" name="dataset" id="internalTxs" value="internalTxs" checked={selectedDataset === 'internalTxs'} onChange={() => setSelectedDataset('internalTxs')} />
-          <label htmlFor="internalTxs">Internal Txs</label>
-          <input type="radio" name="dataset" id="burnedFees" value="burnedFees" checked={selectedDataset === 'burnedFees'} onChange={() => setSelectedDataset('burnedFees')} />
-          <label htmlFor="burnedFees">Burned Fees</label>
-          <input type="radio" name="dataset" id="combinedTxs" value="combinedTxs" checked={selectedDataset === 'combinedTxs'} onChange={() => setSelectedDataset('combinedTxs')} />
-          <label htmlFor="combinedTxs">Combined Txs</label>
-
+        <div className="flex flex-col lg:flex-row gap-2 lg:gap-0 text-xs md:text-base ">
+        
+          <div className='flex items-center'>
+            <input type="radio" name="dataset" id="regularTxs" value="regularTxs" checked={selectedDataset === 'regularTxs'} onChange={() => setSelectedDataset('regularTxs')} />
+            <label className="ml-2 mr-8" htmlFor="regularTxs">Regular Txs</label>
+          </div>
+          <div className='flex items-center'>
+            <input type="radio" name="dataset" id="internalTxs" value="internalTxs" checked={selectedDataset === 'internalTxs'} onChange={() => setSelectedDataset('internalTxs')} />
+            <label className="ml-2 mr-8"  htmlFor="internalTxs">Internal Txs</label>
+          </div>
+          <div className='flex items-center'>
+            <input type="radio" name="dataset" id="burnedFees" value="burnedFees" checked={selectedDataset === 'burnedFees'} onChange={() => setSelectedDataset('burnedFees')} />
+            <label className="ml-2 mr-8"  htmlFor="burnedFees">Burned Fees</label>
+          </div>
+          <div className='flex items-center'>
+            <input type="radio" name="dataset" id="combinedTxs" value="combinedTxs" checked={selectedDataset === 'combinedTxs'} onChange={() => setSelectedDataset('combinedTxs')} />
+            <label className="ml-2 mr-8"  htmlFor="combinedTxs">Combined Txs</label>
+          </div>
           {/* <DateSetter date={selectedDate} setDate={setSelectedDate} maxDate={maxDate}/> */}
         </div>
         { chartData && 
-        <div className="h-[400px] w-[800px] flex items-center justify-center">
+        <div className="relative flex items-center justify-start">
           <Line 
             data={chartData} 
             options={chartOptions}

@@ -146,18 +146,20 @@ const ExchangeDataDonut = () => {
   } as any;
 
   return (
-    <div>
-      <div className="py-6 px-12 rounded-xl border rounded-xl bg-white shadow-lg">
+    <div className='w-full lg:w-2/3'>
+      <div className="md:py-6 md:px-12 p-2 rounded-xl border rounded-xl bg-white shadow-lg">
         <div className="flex flex-row items-center justify-between">
-          <h2 className="text-5xl font-bold">Exchange Balances</h2>  
-          <DateSetter date={selectedDate} setDate={setSelectedDate} maxDate={maxDate}/>
+          <h2 className="lg:text-5xl text-2xl  font-bold">Exchange Balances</h2> 
+          <div className="text-xs lg:text-base">
+            <DateSetter date={selectedDate} setDate={setSelectedDate} maxDate={maxDate}/>
+          </div>
         </div>
         { chartData && 
-          <div className="">
+          <div className="relative w-full h-full">
             <Doughnut 
               data={chartData} 
               options={chartOptions}
-              className='h-[300px] w-[800px]'
+              className='w-full h-full'
               ref={chartRef}
               // onClick={onClick}
             /> 

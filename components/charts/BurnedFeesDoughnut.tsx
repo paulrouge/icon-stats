@@ -50,8 +50,16 @@ const BurnedFeesDonut = () => {
   const [chartData, setChartData] = useState<ChartData|null>(null)
   const [selectedDate, setSelectedDate] = useState<Date|null>(null)
   const [maxDate, setMaxDate] = useState<Date|null>(null)
+  const [windowWidth, setWindowWidth] = useState<number>(0)
   const chartRef = useRef();
  
+
+  // get the window width
+  useEffect(() => {
+    setWindowWidth(window.innerWidth)
+  }, [])
+  
+
   // set the initial date to yesterday, the max date should also be yesterday and stay that way
   useEffect(() => {
     const yesterday = new Date(Date.now() - 864e5)
@@ -117,6 +125,13 @@ const BurnedFeesDonut = () => {
     setChartData(chartData)
   }, [txDataBurnedFees])
 
+  const getPos = () => {
+    if (windowWidth < 768) {
+      return 'bottom'
+    } else {
+      return 'left'
+    }
+  }
 
   const chartOptions = {
     plugins: {
@@ -153,13 +168,13 @@ const BurnedFeesDonut = () => {
   } as any;
 
   return (
-    <div>
-      <div className="py-6 px-12 rounded-xl border rounded-xl bg-white shadow-lg">
+    <div className='w-full lg:w-2/3'>
+      <div className="md:py-6 md:px-12 p-2 rounded-xl border rounded-xl bg-white shadow-lg">
         <div className="flex items-center">
-          <h2 className="text-5xl font-bold">Burned Fees</h2>  
+          <h2 className="lg:text-5xl text-2xl font-bold">Burned Fees</h2>  
         </div>
-        <div className="flex items-center justify-between">
-          <div>
+        <div className="flex items-center justify-between flex-col md:flex-row text-xs md:text-base gap-4 md:gap-0">
+          <div className=''>
             <input type="radio" id="daily_burned" name="period_burned" value="daily" checked={period === "daily"} onChange={() => setPeriod("daily")} />
             <label htmlFor="daily" className="ml-2 mr-8">Daily</label>
             <input type="radio" id="weekly__burned" name="period_burned" value="weekly" checked={period === "weekly"} onChange={() => setPeriod("weekly")} />
@@ -167,7 +182,9 @@ const BurnedFeesDonut = () => {
             <input type="radio" id="monthly__burned" name="period_burned" value="monthly" checked={period === "monthly"} onChange={() => setPeriod("monthly")} />
             <label htmlFor="monthly" className="ml-2 mr-8">Monthly</label>
           </div>
-          <DateSetter date={selectedDate} setDate={setSelectedDate} maxDate={maxDate}/>
+          <div className="text-xs lg:text-base">
+            <DateSetter date={selectedDate} setDate={setSelectedDate} maxDate={maxDate}/>
+          </div>
         </div>
         <div className='text-sm text-gray-500 my-4'>
         { selectedDate && period === "daily" && <p>{formatDateForGHRepo(selectedDate)}</p>}
@@ -175,11 +192,11 @@ const BurnedFeesDonut = () => {
         { selectedDate && period === "monthly" && <p>{formatMonthlyDatesForGHRepo(selectedDate).replaceAll("_", " ")}</p>}
         </div>
         { chartData && 
-          <div className="">
+          <div className="relative w-full h-full">
             <Doughnut 
               data={chartData} 
               options={chartOptions}
-              className='h-[300px] w-[800px]'
+              className='h-full w-full'
               ref={chartRef}
               // onClick={onClick}
             /> 

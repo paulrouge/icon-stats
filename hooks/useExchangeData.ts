@@ -33,6 +33,8 @@ const useExchangeData = () => {
         return _exchangeData
       })
 
+        // 
+
         // testing, print all names
         // const names = _exchangeData.map(exchange => exchange.names)
         // console.log(names)

@@ -27,7 +27,7 @@ const DateSetter = (props: Props) => {
     }
   
     return (
-    <div className='flex gap-2'>
+    <div className='flex gap-2 items-center'>
         <LeftChevron onClick={minusOneDay}/>
         {
         props.date && 

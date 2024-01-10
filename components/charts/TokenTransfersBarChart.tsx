@@ -62,7 +62,7 @@ const TokenTransfersBarChart = () => {
   const [chartData, setChartData] = useState<ChartData|null>(null)
   const [selectedDate, setSelectedDate] = useState<Date|null>(null)
   const [maxDate, setMaxDate] = useState<Date|null>(null)
-  const [selectedScale, setSelectedScale] = useState<Scale>(Scale.lin)
+  const [selectedScale, setSelectedScale] = useState<Scale>(Scale.log)
   const [option, setOption] = useState<options>('transactions')
   const [tokenNames, setTokenNames] = useState<string[]>([])
 
@@ -171,26 +171,36 @@ const chartOptions = {
 } as any;
 
 return (
-  <div>
-    <div className="py-6 px-12 rounded-xl border rounded-xl bg-white shadow-lg">
+  <div className='w-full lg:w-2/3'>
+    <div className="md:py-6 md:px-12 p-2 rounded-xl border rounded-xl bg-white shadow-lg">
       <div className="flex items-center justify-between">
-        <h2 className="md:text-5xl text-2xl font-bold">Token Transfers</h2>   
+        <h2 className="lg:text-5xl text-2xl font-bold">Token Transfers</h2>   
       </div>
-        <div className="flex items-center justify-between mb-4">
-          <div>
-            <input type="radio" id="transactions" name="option" value="transactions" checked={option === 'transactions'} onChange={() => setOption('transactions')}/>
-            <label className="ml-2 mr-8" htmlFor="transactions">Transactions</label>
-            <input type="radio" id="USD value transfered" name="option" value="USD value transfered" checked={option === 'USD value transfered'} onChange={() => setOption('USD value transfered')}/>
-            <label className="ml-2 mr-8" htmlFor="USD value transfered">USD value transfered</label>
-            <input type="radio" id="holders" name="option" value="holders" checked={option === 'holders'} onChange={() => setOption('holders')}/>
-            <label className="ml-2 mr-8" htmlFor="holders">Holders</label>
-            <input type="radio" id="token amount" name="option" value="token amount" checked={option === 'token amount'} onChange={() => setOption('token amount')}/>
-            <label className="ml-2 mr-8" htmlFor="token amount">Token amount</label>
+        <div className="flex items-center justify-between mb-4 flex-col md:flex-row text-xs md:text-base gap-4 md:gap-0">
+          <div className='flex flex-col lg:flex-row gap-2 lg:gap-0'>
+            <div className='flex items-center'>
+              <input type="radio" id="transactions" name="option" value="transactions" checked={option === 'transactions'} onChange={() => setOption('transactions')}/>
+              <label className="ml-2 mr-8" htmlFor="transactions">Transactions</label>
+            </div>
+            <div className='flex items-center'>
+              <input type="radio" id="USD value transfered" name="option" value="USD value transfered" checked={option === 'USD value transfered'} onChange={() => setOption('USD value transfered')}/>
+              <label className="ml-2 mr-8" htmlFor="USD value transfered">USD value transfered</label>
+            </div>
+            <div className='flex items-center'>
+              <input type="radio" id="holders" name="option" value="holders" checked={option === 'holders'} onChange={() => setOption('holders')}/>
+              <label className="ml-2 mr-8" htmlFor="holders">Holders</label>
+            </div>
+            <div className='flex items-center'>
+              <input type="radio" id="token amount" name="option" value="token amount" checked={option === 'token amount'} onChange={() => setOption('token amount')}/>
+              <label className="ml-2 mr-8" htmlFor="token amount">Token amount</label>
+            </div>
           </div>
-          <DateSetter date={selectedDate} setDate={setSelectedDate} maxDate={maxDate}/>
+          <div className="text-xs lg:text-base">
+            <DateSetter date={selectedDate} setDate={setSelectedDate} maxDate={maxDate}/>
+          </div>
         </div>
       { chartData && 
-      <div className="h-[400px] w-[800px] flex flex-col items-center justify-center">
+      <div className="relative w-full">
         <Bar 
           data={chartData} 
           options={chartOptions}
